@@ -39,7 +39,7 @@ public class CitaIntegrationRoute extends RouteBuilder {
                     mensaje.put("tipoMensaje", "COMANDO_FACTURAR_CITA");
                     exchange.getIn().setBody(objectMapper.writeValueAsString(mensaje));
                 })
-                .to("spring-rabbitmq:default?queues=billing.queue")
+                .to("spring-rabbitmq:default?routingKey=billing.queue")
                 .log("Enviado a billing.queue");
 
         // 2. Publish/Subscribe que es appointments.events

@@ -1,0 +1,5 @@
+---
+Fecha: 2026-06-03 20:45:05
+idCita: 
+Motivo: Datos inválidos o incompletos
+Payload: CitaRequest(idCita=, paciente=Ana Torres, correo=ana.torres@email.com, especialidad=Cardiología, fechaCita=2026-06-15, sede=Centro Norte, valor=0.0)
