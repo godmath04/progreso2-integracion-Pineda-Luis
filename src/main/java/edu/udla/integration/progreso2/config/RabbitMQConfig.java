@@ -1,6 +1,9 @@
 package edu.udla.integration.progreso2.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +13,11 @@ public class RabbitMQConfig {
     * Se implementa configuracion de RabbitMQ para que se creen automaticamente
     * las colas, exchange y bindings al arrancar la aplicacion.
     * */
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
 
     // Point-to-Point: cola de facturación
     @Bean
@@ -43,5 +51,10 @@ public class RabbitMQConfig {
     @Bean
     public Binding analyticsBinding() {
         return BindingBuilder.bind(analyticsQueue()).to(appointmentsExchange());
+    }
+
+    @Bean
+    public ApplicationRunner initRabbit(RabbitAdmin rabbitAdmin) {
+        return args -> rabbitAdmin.initialize();
     }
 }
