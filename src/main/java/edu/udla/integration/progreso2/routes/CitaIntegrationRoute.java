@@ -20,6 +20,7 @@ public class CitaIntegrationRoute extends RouteBuilder {
         // Ruta principal
         from("direct:procesarCita")
                 .routeId("ruta-principal")
+                .process(exchange -> exchange.setProperty("cita", exchange.getIn().getBody(CitaRequest.class)))
                 .log("Cita recibida: ${body}")
                 .to("direct:enviarFacturacion")
                 .to("direct:publicarEvento")
@@ -29,7 +30,7 @@ public class CitaIntegrationRoute extends RouteBuilder {
         from("direct:enviarFacturacion")
                 .routeId("ruta-facturacion")
                 .process(exchange -> {
-                    CitaRequest cita = exchange.getIn().getBody(CitaRequest.class);
+                    CitaRequest cita = exchange.getProperty("cita", CitaRequest.class);
                     Map<String, Object> mensaje = new HashMap<>();
                     mensaje.put("idCita", cita.getIdCita());
                     mensaje.put("paciente", cita.getPaciente());
@@ -45,7 +46,7 @@ public class CitaIntegrationRoute extends RouteBuilder {
         from("direct:publicarEvento")
                 .routeId("ruta-pubsub")
                 .process(exchange -> {
-                    CitaRequest cita = exchange.getIn().getBody(CitaRequest.class);
+                    CitaRequest cita = exchange.getProperty("cita", CitaRequest.class);
                     Map<String, Object> evento = new HashMap<>();
                     evento.put("idCita", cita.getIdCita());
                     evento.put("paciente", cita.getPaciente());
@@ -63,7 +64,7 @@ public class CitaIntegrationRoute extends RouteBuilder {
         from("direct:generarCSV")
                 .routeId("ruta-csv")
                 .process(exchange -> {
-                    CitaRequest cita = exchange.getIn().getBody(CitaRequest.class);
+                    CitaRequest cita = exchange.getProperty("cita", CitaRequest.class);
                     java.io.File file = new java.io.File("data/outbox/auditoria-citas.csv");
                     file.getParentFile().mkdirs();
                     boolean escribirHeader = !file.exists() || file.length() == 0;
